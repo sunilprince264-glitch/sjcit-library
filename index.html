@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SJCIT Library – LIVE Dashboard</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.container {
+    display: flex;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.table-box {
+    width: 45%;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ccc;
+}
+
+h2 {
+    background: #0a84ff;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #fafafa;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 SJCIT Library – LIVE Attendance Dashboard</h1>
+
+<div class="container">
+    <div class="table-box">
+        <h2>Entered Students</h2>
+        <table id="enteredTable">
+            <tr><th>USN</th><th>Name</th><th>Dept</th></tr>
+        </table>
+    </div>
+
+    <div class="table-box">
+        <h2>Exited Students</h2>
+        <table id="exitedTable">
+            <tr><th>USN</th><th>Name</th><th>Dept</th></tr>
+        </table>
+    </div>
+</div>
+
+<script>
+// YOUR SPREADSHEET ID
+const SHEET_ID = "1Q-EmVyrN0OaDAr5qJ_tJI6H7AnpPIGbk1pAHEuXlnO8";
+
+// URL to fetch Attendance sheet as JSON
+const URL = https://opensheet.elk.sh/${SHEET_ID}/Attendance;
+
+function loadData() {
+    fetch(URL)
+        .then(response => response.json())
+        .then(data => {
+            // containers
+            const enteredTable = document.getElementById("enteredTable");
+            const exitedTable = document.getElementById("exitedTable");
+
+            // clear old rows
+            enteredTable.innerHTML = "<tr><th>USN</th><th>Name</th><th>Dept</th></tr>";
+            exitedTable.innerHTML = "<tr><th>USN</th><th>Name</th><th>Dept</th></tr>";
+
+            // process each row
+            data.forEach(row => {
+                if (row.Status === "Entered") {
+                    enteredTable.innerHTML += `
+                        <tr>
+                            <td>${row.USN}</td>
+                            <td>${row.Name}</td>
+                            <td>${row.Department}</td>
+                        </tr>`;
+                } else if (row.Status === "Exited") {
+                    exitedTable.innerHTML += `
+                        <tr>
+                            <td>${row.USN}</td>
+                            <td>${row.Name}</td>
+                            <td>${row.Department}</td>
+                        </tr>`;
+                }
+            });
+        });
+}
+
+// Auto-refresh every 5 seconds
+setInterval(loadData, 5000);
+
+// Load immediately when page opens
+loadData();
+</script>
+
+</body>
+</html>
